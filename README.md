@@ -35,9 +35,12 @@ npx tsc && node dist/server.js
 PORT=5000
 NODE_ENV=development
 MONGODB_URI=mongodb://localhost:27017/collabsync
-JWT_SECRET=your-secret-key
+JWT_SECRET=your-super-secret-jwt-key-change-in-production
 JWT_EXPIRE=7d
 CORS_ORIGIN=http://localhost:3000
+CLOUDINARY_CLOUD_NAME=your-cloud-name
+CLOUDINARY_API_KEY=your-api-key
+CLOUDINARY_API_SECRET=your-api-secret
 ```
 
 ## API Endpoints
