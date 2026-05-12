@@ -1,8 +1,30 @@
-import mongoose, { Schema } from 'mongoose';
+import mongoose, { Schema, Document, Types } from 'mongoose';
 import crypto from 'crypto';
 import { WORKSPACE_INVITE_CODE_LENGTH } from '../types/workspace.ts';
 
-const memberSchema = new Schema({
+export interface IWorkspaceMember {
+  user: Types.ObjectId;
+  role: 'admin' | 'member';
+  joinedAt: Date;
+}
+
+export interface IWorkspaceDocument extends Document {
+  name: string;
+  description?: string;
+  owner: Types.ObjectId;
+  members: IWorkspaceMember[];
+  inviteCode?: string;
+  inviteCodeExpires?: Date;
+  createdAt: Date;
+  updatedAt: Date;
+  generateInviteCode(): string;
+  isOwner(userId: Types.ObjectId | string): boolean;
+  isMember(userId: Types.ObjectId | string): boolean;
+  getMemberRole(userId: Types.ObjectId | string): 'admin' | 'member' | null;
+  canManage(userId: Types.ObjectId | string): boolean;
+}
+
+const memberSchema = new Schema<IWorkspaceMember>({
   user: {
     type: Schema.Types.ObjectId,
     ref: 'User',
@@ -19,7 +41,7 @@ const memberSchema = new Schema({
   }
 }, { _id: false });
 
-const workspaceSchema = new Schema({
+const workspaceSchema = new Schema<IWorkspaceDocument>({
   name: {
     type: String,
     required: [true, 'Workspace name is required'],
@@ -86,5 +108,6 @@ workspaceSchema.methods.canManage = function(userId: mongoose.Types.ObjectId | s
   return this.isOwner(userId) || this.getMemberRole(userId) === 'admin';
 };
 
-export const Workspace = mongoose.model('Workspace', workspaceSchema);
+export const Workspace = mongoose.model<IWorkspaceDocument>('Workspace', workspaceSchema);
+export type IWorkspace = IWorkspaceDocument;
 export default Workspace;

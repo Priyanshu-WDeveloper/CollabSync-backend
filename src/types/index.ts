@@ -4,3 +4,4 @@ export * from './task.ts';
 export * from './message.ts';
 export * from './notification.ts';
 export * from './api.ts';
+export * from './express.ts';

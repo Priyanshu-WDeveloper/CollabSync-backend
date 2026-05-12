@@ -2,7 +2,7 @@ import { Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { ApiError } from '../utils/ApiError.ts';
 import { catchAsync } from '../utils/catchAsync.ts';
-import { AuthenticatedRequest } from '../types/express.ts';
+import { AuthenticatedRequest, IAuthenticatedUser } from '../types/index.ts';
 import User from '../models/User.ts';
 
 export const authenticate = catchAsync(
@@ -31,7 +31,7 @@ export const authenticate = catchAsync(
         throw new ApiError(401, 'User no longer exists.');
       }
 
-      req.user = user;
+      req.user = user as unknown as IAuthenticatedUser;
       next();
     } catch {
       throw new ApiError(401, 'Invalid or expired token.');
@@ -57,7 +57,7 @@ export const optionalAuth = catchAsync(
           token,
           process.env.JWT_SECRET!,
         ) as { id: string };
-        req.user = (await User.findById(decoded.id)) ?? undefined;
+        req.user = (await User.findById(decoded.id)) as unknown as IAuthenticatedUser ?? undefined;
       } catch {
         // Token invalid, continue without user
       }

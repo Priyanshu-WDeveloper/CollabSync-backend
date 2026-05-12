@@ -180,7 +180,7 @@ export const joinViaInvite = catchAsync(async (req: AuthenticatedRequest, res: R
     throw new ApiError(400, 'You are already a member of this workspace');
   }
 
-  workspace.members.push({ user: req.user!._id, role: USER_ROLES.MEMBER });
+  workspace.members.push({ user: req.user!._id, role: USER_ROLES.MEMBER, joinedAt: new Date() });
   await workspace.save();
 
   res.json({
